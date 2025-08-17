@@ -317,6 +317,5 @@ export default {
 ## 7. Дополнительные ресурсы
 
 - [Официальная документация REST API Битрикс24](https://apidocs.bitrix24.ru/api-reference/)
-- [Справочник методов user.get](https://apidocs.bitrix24.ru/api-reference/user/user-get.html)
 - [Документация по виджетам и взаимодействию с UI](https://apidocs.bitrix24.ru/api-reference/widgets/)
 - [Документация BX24 JS SDK](https://apidocs.bitrix24.ru/api-reference/bx24-js-sdk/)
