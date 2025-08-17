@@ -69,8 +69,8 @@ export default {
      */
     documentId() {
       // Получаем тип и ID сущности из контекста размещения
-      const entityTypeId = api()?.fields?.placement?.options?.ENTITY_DATA?.entityTypeId;
-      const entityId = api()?.fields?.placement?.options?.ENTITY_DATA?.entityId;
+      const entityTypeId = api().fields.placement?.options?.ENTITY_DATA?.entityTypeId;
+      const entityId = api().fields.placement?.options?.ENTITY_DATA?.entityId;
 
       // Формируем идентификатор документа в формате DYNAMIC_{entityTypeId}_{entityId}
       if (entityTypeId && entityId) {

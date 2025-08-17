@@ -1,52 +1,64 @@
 // /dev/mockDataLoader.ts
-import type {ApiObjectFieldsType} from "./api.ts";
+import type { ApiObjectFieldsType } from "./api.ts";
 
 type MockMethodType = {
     method: string;
-    params?: any;
-    result: any;
+    params?: Record<string, unknown>;
+    result: unknown;
     delay?: number;
-}
+};
 
 type FieldsFileType = {
     data: ApiObjectFieldsType;
     mtime: Date;
-}
+};
 
-export type mockDataType = { latestFields: ApiObjectFieldsType; methodMocks: MockMethodType[] }
-
+export type MockDataType = {
+    latestFields: ApiObjectFieldsType;
+    methodMocks: MockMethodType[];
+};
 
 const env = import.meta.env;
 
-export function loadMockData(): mockDataType {
+// ----------- TYPE GUARDS -----------
+function isApiObjectFieldsType(obj: unknown): obj is ApiObjectFieldsType {
+    return typeof obj === "object" && obj !== null && "placement" in obj;
+}
+
+function isMockMethodType(obj: unknown): obj is MockMethodType {
+    if (typeof obj !== "object" || obj === null) return false;
+    const o = obj as Record<string, unknown>;
+    return (
+        typeof o.method === "string" &&
+        "result" in o
+    );
+}
+
+// ----------- MAIN LOADER -----------
+export function loadMockData(): MockDataType {
     if (!env?.DEV) {
-        return {latestFields: {placement: null}, methodMocks: []};
+        return { latestFields: { placement: null }, methodMocks: [] };
     }
 
     try {
-        const mockModules = import.meta.glob('/src/mock/*.json', {
+        const mockModules = import.meta.glob<unknown>("/src/mock/*.json", {
             eager: true,
-            import: 'default'
+            import: "default"
         });
 
         const fieldsFiles: FieldsFileType[] = [];
         const methodMocks: MockMethodType[] = [];
 
-        Object.values(mockModules).forEach((content: any) => {
-            if (!content) return;
-
-            // Если JSON содержит ключ placement — сохраняем весь объект
-            if (content.placement) {
+        Object.values(mockModules).forEach((content: unknown) => {
+            if (isApiObjectFieldsType(content)) {
                 fieldsFiles.push({
-                    data: content as ApiObjectFieldsType,
+                    data: content,
                     mtime: new Date()
                 });
-            }
-            // Если это метод-мок
-            else if (content.method && content.result) {
+            } else if (isMockMethodType(content)) {
                 methodMocks.push({
                     method: content.method,
-                    params: content.params || {},
+                    params: content.params ?? {},
                     result: content.result,
                     delay: content.delay
                 });
@@ -59,8 +71,8 @@ export function loadMockData(): mockDataType {
             latestFields: fieldsFiles[0]?.data || null,
             methodMocks
         };
-    } catch (error) {
-        console.error('Ошибка при загрузке моков:', error);
-        return {latestFields: {placement: null}, methodMocks: []};
+    } catch {
+        console.error("Ошибка при загрузке моков");
+        return { latestFields: { placement: null }, methodMocks: [] };
     }
 }

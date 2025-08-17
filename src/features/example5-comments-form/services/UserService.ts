@@ -27,7 +27,10 @@ export default class UserService {
         if (this._currentUser) return this._currentUser;
 
         // Запрашиваем данные текущего пользователя из API Bitrix24
-        const response = await api().methods.b24Call("user.current", {});
+        const response = await api().methods.b24Call<{ result: UserType }>(
+            "user.current",
+            {}
+        );
         this._currentUser = response.result as UserType;
         return this._currentUser;
     }
@@ -57,7 +60,10 @@ export default class UserService {
         if (this._users) return;
 
         // Загружаем список пользователей через API
-        const response = await api().methods.b24Call("user.get", {});
+        const response = await api().methods.b24Call<{ result: UserType[] }>(
+            "user.get",
+            {}
+        );
         
         // Сохраняем результат в кэш
         this._users = response.result;

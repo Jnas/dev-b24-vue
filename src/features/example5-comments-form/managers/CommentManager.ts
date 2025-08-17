@@ -53,9 +53,9 @@ export default class CommentManager {
             
             // Обновление списка комментариев после загрузки данных
             this.updateComments(this.crmService.getComments());
-        } catch (error) {
-            console.error('Ошибка инициализации CommentManager:', error);
-            throw error;
+        } catch {
+            console.error('Ошибка инициализации CommentManager');
+            throw 'Ошибка инициализации CommentManager';
         }
     }
 
@@ -156,14 +156,14 @@ export default class CommentManager {
             this.comments.value.push(commentData);
 
             // Запускаем бизнес-процесс асинхронно, не дожидаясь его завершения
-            this.startBusinessProcess(commentData).catch(error => {
-                console.error('Ошибка при запуске бизнес-процесса:', error);
+            this.startBusinessProcess(commentData).catch(() => {
+                console.error('Ошибка при запуске бизнес-процесса');
                 // Продолжаем выполнение, даже если бизнес-процесс не запустился
             });
 
             return true;
-        } catch (error) {
-            console.error('Ошибка при добавлении комментария:', error);
+        } catch {
+            console.error('Ошибка при добавлении комментария');
             return false;
         }
     }
@@ -190,8 +190,8 @@ export default class CommentManager {
                 this.crmService.crmId,
                 comment
             );
-        } catch (error) {
-            console.error('Ошибка запуска бизнес-процесса:', error);
+        } catch {
+            console.error('Ошибка запуска бизнес-процесса');
             // Можно добавить уведомление пользователя об ошибке через систему нотификаций
         }
     }

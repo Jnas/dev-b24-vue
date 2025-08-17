@@ -10,8 +10,7 @@ import type {CrmCommentType} from "../types/types";
  */
 export default class CrmService {
     // Кэш загруженного элемента CRM
-    private _currentItem: Record<string, any> | null = null;
-
+    private _currentItem: Record<string, unknown> | null = null;
     /**
      * ID типа сущности CRM
      * Идентификатор динамического типа сущности
@@ -31,7 +30,8 @@ export default class CrmService {
      * @returns Числовой ID элемента CRM
      */
     get crmId(): number {
-        return Number(api().fields.placement.options.ID);
+        const placement =  api().fields.placement as { options?: { ID?: number | string } };
+        return Number(placement?.options?.ID ?? 0);
     }
 
     /**
@@ -47,12 +47,12 @@ export default class CrmService {
         // Возвращаем закэшированные данные, если они есть
         if (this._currentItem) return;
 
-        // Загружаем данные элемента через API
-        const response = await api().methods.b24Call("crm.item.get", {
+        const response = await api().methods.b24Call<{
+            result?: { item?: Record<string, unknown> }
+        }>("crm.item.get", {
             entityTypeId: this.entityTypeId,
             id: this.crmId
         });
-
         if (response?.result?.item) {
             this._currentItem = response.result.item;
         } else {
@@ -66,7 +66,8 @@ export default class CrmService {
      */
     getComments(): CrmCommentType[] {
         if (!this._currentItem) return [];
-        return this.parseComments(this._currentItem.ufCrm107SvJsonComments);
+        const raw = this._currentItem.ufCrm107SvJsonComments as unknown;
+        return this.parseComments(raw as string[]);
     }
 
     /**
@@ -100,12 +101,12 @@ export default class CrmService {
         const newComment = JSON.stringify({userId, text, timestamp});
 
         // Получаем текущие комментарии или инициализируем пустым массивом
-        const comments = this._currentItem.ufCrm107SvJsonComments || [];
+        const comments = (this._currentItem.ufCrm107SvJsonComments as unknown as string[]) || [];
         const updatedComments = [...comments, newComment];
 
         try {
             // Обновляем элемент через API Bitrix24
-            const response = await api().methods.b24Call("crm.item.update", {
+            const response = await api().methods.b24Call<{ result?: boolean }>("crm.item.update", {
                 entityTypeId: this.entityTypeId,
                 id: this.crmId,
                 fields: {
@@ -121,8 +122,8 @@ export default class CrmService {
 
             console.error('Не удалось обновить комментарий: неверный формат ответа');
             return {success: false};
-        } catch (error) {
-            console.error("Ошибка при обновлении комментария:", error);
+        } catch  {
+            console.error("Ошибка при обновлении комментария");
             return {success: false};
         }
     }
@@ -146,7 +147,7 @@ export default class CrmService {
                         timestamp: parsed.timestamp || Date.now()
                     });
                 }
-            } catch (error) {
+            } catch {
                 console.error('Ошибка парсинга комментария:', jsonString);
                 // Продолжаем обработку остальных комментариев при ошибке парсинга
             }

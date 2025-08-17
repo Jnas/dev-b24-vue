@@ -234,8 +234,8 @@ export default {
       try {
         // Получаем данные о текущем пользователе
         this.b24result = await api().methods.b24Call("user.current", {});
-      } catch (error) {
-        console.error("Ошибка при получении данных пользователя:", error);
+      } catch {
+        console.error("Ошибка при получении данных пользователя");
         this.b24result = { error: "Не удалось загрузить данные пользователя" };
       } finally {
         this.loadingB24 = false;

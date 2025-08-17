@@ -37,9 +37,9 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import AppLoader from "@/shared/components/AppLoader.vue";
-import CommentsList from "@/features/example-dev-comments-form/components/CommentsList.vue";
-import CommentInput from "@/features/example-dev-comments-form/components/CommentInput.vue";
-import CommentManager from "@/features/example-dev-comments-form/managers/CommentManager.ts";
+import CommentsList from "@/features/example5-comments-form/components/CommentsList.vue";
+import CommentInput from "@/features/example5-comments-form/components/CommentInput.vue";
+import CommentManager from "@/features/example5-comments-form/managers/CommentManager.ts";
 
 // Состояния компонента
 const isInitialLoading = ref(true); // Флаг начальной загрузки данных
@@ -74,8 +74,8 @@ const loadData = async () => {
     isLoadingComments.value = true;
 
     await commentManager.initialize();
-  } catch (error) {
-    console.error('Ошибка при загрузке данных:', error);
+  } catch  {
+    console.error('Ошибка при загрузке данных');
     errorMessage.value = 'Не удалось загрузить комментарии. Пожалуйста, попробуйте позже.';
   } finally {
     isInitialLoading.value = false;
@@ -107,8 +107,8 @@ const onSubmit = async (text: string) => {
     } else {
       errorMessage.value = 'Не удалось добавить комментарий. Пожалуйста, попробуйте снова.';
     }
-  } catch (error) {
-    console.error('Ошибка при отправке комментария:', error);
+  } catch {
+    console.error('Ошибка при отправке комментария');
     errorMessage.value = 'Произошла ошибка при отправке комментария.';
   } finally {
     isAddingComment.value = false;

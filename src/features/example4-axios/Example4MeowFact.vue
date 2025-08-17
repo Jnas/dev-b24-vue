@@ -38,7 +38,9 @@ import AppLoader from "@/shared/components/AppLoader.vue";
 
 // Интерфейс для типизации ответа от API с фактами о кошках
 interface MeowApiResponse {
-  data: string[];
+  data: {
+    data: string[];
+  }
 }
 
 // Состояния компонента
@@ -58,7 +60,6 @@ async function fetchFact() {
         'https://meowfacts.herokuapp.com/'
     );
 
-    // @ts-ignore - Игнорируем предупреждение о типе, так как структура ответа известна
     const facts = response.data.data;
     fact.value = facts.length > 0 ? facts[0] : null;
 
@@ -68,7 +69,7 @@ async function fetchFact() {
     } else {
       error.value = null;
     }
-  } catch (e) {
+  } catch {
     // Обрабатываем ошибки при загрузке
     error.value = 'Ошибка при загрузке факта';
     fact.value = null;

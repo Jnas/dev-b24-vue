@@ -34,8 +34,8 @@ export async function initApp(container: string | Element = '#appMount') {
         }
 
         app.mount(resolveContainer(container))
-    } catch (err) {
-        console.error('Ошибка инициализации приложения:', err)
+    } catch {
+        console.error('Ошибка инициализации приложения')
     }
 }
 

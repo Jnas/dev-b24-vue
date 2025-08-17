@@ -24,8 +24,8 @@ const cleanAssetsPlugin = () => ({
                         rmSync(path.join(dirPath, file));
                     }
                 });
-            } catch (e: any) {
-                console.error(`Ошибка при очистке ${dirPath}:`, e.message);
+            } catch {
+                console.error(`Ошибка при очистке ${dirPath}:`);
             }
         };
 
@@ -35,8 +35,8 @@ const cleanAssetsPlugin = () => ({
                 if (files.length === 0) {
                     rmdirSync(dirPath);
                 }
-            } catch (e: any) {
-                console.error(`Ошибка при проверке папки ${dirPath}:`, e.message);
+            } catch {
+                console.error(`Ошибка при проверке папки ${dirPath}:`);
             }
         };
 
@@ -59,8 +59,8 @@ const cleanAssetsPlugin = () => ({
             removeEmptyDir(assetsDir);
             removeEmptyDir(fontsDir);
 
-        } catch (e: any) {
-            console.error('Ошибка при очистке:', e);
+        } catch  {
+            console.error('Ошибка при очистке');
         }
     }
 });
