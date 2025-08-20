@@ -49,7 +49,7 @@ const getMockData = (): MockDataType => {
     if (import.meta.env.DEV) {
         try {
             return loadMockData();
-        } catch{
+        } catch {
             console.warn('[API] Не удалось загрузить моковые данные');
         }
     }
@@ -67,8 +67,14 @@ const findMock = async <T = unknown>(
             m.method === method &&
             JSON.stringify(m.params ?? {}) === JSON.stringify(params)
     );
+    if (!mock) {
 
-    if (!mock) return {result: []} as T;
+        console.log(`Требуется сохранить моковые результаты запроса\nМетод/Параметры:\n\n${method}`);
+        console.log(JSON.stringify(params));
+        return {
+            result: []
+        } as T;
+    }
     if (mock.delay) await new Promise(r => setTimeout(r, mock.delay));
     return mock.result as T;
 };
@@ -79,12 +85,12 @@ const createDevApi = (): ApiObjectType => ({
         toast: window.Toast ?? ({} as ToastMethods),
         axios: window.Axios ?? ({} as AxiosMethods),
         openCustomScript: (...args: unknown[]) => {
-            window.Toast?.error?.(
+            window.Toast?.warning?.(
                 `Метод "openCustomScript" не доступен в dev-режиме. Аргументы: ${JSON.stringify(args)}`
             );
         },
         setUserfieldValue: (value: unknown) => {
-            window.Toast?.error?.(`Метод "setUserfieldValue" не доступен в dev-режиме. Значение: ${JSON.stringify(value)}`);
+            window.Toast?.warning?.(`Метод "setUserfieldValue" не доступен в dev-режиме. Значение: ${JSON.stringify(value)}`);
         }
     },
     fields: latestFields

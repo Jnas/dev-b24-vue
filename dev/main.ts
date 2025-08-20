@@ -1,17 +1,17 @@
 // /dev/main.ts
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import AppMount from '../src/AppMount.vue'
 import vuetify from './vuetify'
 
 async function setupDevTools(app: ReturnType<typeof createApp>) {
-    const [{ default: Toast, useToast }] = await Promise.all([
-        import('vue-toastification'),
+    const {default: Toast, useToast} = await import('vue-toastification');
+    if (import.meta.env.DEV) {
         import('vue-toastification/dist/index.css')
-    ])
-    app.use(Toast, { icon: false })
+    }
+    app.use(Toast, {icon: false})
     ;(window as any).Toast = useToast()
 
-    const { default: Axios } = await import('axios')
+    const {default: Axios} = await import('axios')
     ;(window as any).Axios = Axios
 }
 
