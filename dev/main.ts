@@ -9,10 +9,10 @@ async function setupDevTools(app: ReturnType<typeof createApp>) {
         import('vue-toastification/dist/index.css')
     }
     app.use(Toast, {icon: false})
-    ;(window as any).Toast = useToast()
+    ;(window as unknown as { Toast: ReturnType<typeof useToast> }).Toast = useToast();
 
     const {default: Axios} = await import('axios')
-    ;(window as any).Axios = Axios
+    ;(window as unknown as { Axios: typeof Axios }).Axios = Axios;
 }
 
 function resolveContainer(target: string | Element): Element {
