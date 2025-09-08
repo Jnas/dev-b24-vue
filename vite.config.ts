@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from "node:url";
 import path from 'path';
 import { readdirSync, rmdirSync, rmSync } from 'fs';
+import { existsSync, mkdirSync } from 'fs';
 
 const externalLibs = [
     'vue',
@@ -69,7 +70,12 @@ const cleanAssetsPlugin = () => ({
 
 export default defineConfig(({ command }) => {
     const isDev = command === 'serve';
-
+    if (isDev) {
+        const mockDir = path.join(process.cwd(), 'src', 'mock');
+        if (!existsSync(mockDir)) {
+            mkdirSync(mockDir, { recursive: true });
+        }
+    }
     return {
         plugins: [vue(), cleanAssetsPlugin()],
         resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },

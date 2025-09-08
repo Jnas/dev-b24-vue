@@ -12,8 +12,11 @@ interface ToastMethods {
 
 interface AxiosMethods {
     get<T = unknown>(url: string, config?: unknown): Promise<T>;
+
     post<T = unknown>(url: string, data?: unknown, config?: unknown): Promise<T>;
+
     put<T = unknown>(url: string, data?: unknown, config?: unknown): Promise<T>;
+
     delete<T = unknown>(url: string, config?: unknown): Promise<T>;
 }
 
@@ -68,9 +71,23 @@ const findMock = async <T = unknown>(
             JSON.stringify(m.params ?? {}) === JSON.stringify(params)
     );
     if (!mock) {
+        const indentedParams = JSON.stringify(params, null, 2)
+            .split('\n')
+            .map(line => '  ' + line)
+            .join(' \n');
 
-        console.log(`Требуется сохранить моковые результаты запроса\nМетод/Параметры:\n\n${method}`);
-        console.log(JSON.stringify(params));
+        console.log(
+            '%c[API]📥 Требуется сохранить моковые результаты запроса\n' +
+            '%c  Метод: %c \n    ' + method + '\n' +
+            '%c  Параметры: %c \n ' + indentedParams,
+
+            // ОБЯЗАТЕЛЬНО в этом порядке:
+            'color: #1A1A1A; background: #faf9f0; padding: 6px; border-radius: 4px; font-weight: bold', // [API]
+            'color: #1A1A1A; background: #faf9f0; font-weight: bold', // "  Метод: "
+            'color: #1976D2; background: #faf9f0; font-weight: bold; cursor: text', // Значение метода
+            'color: #1A1A1A; background: #faf9f0; font-weight: bold', // "  Параметры: "
+            'color: #1976D2; background: #faf9f0; white-space: pre; cursor: text' // Значение параметров
+        );
         return {
             result: []
         } as T;
@@ -79,27 +96,42 @@ const findMock = async <T = unknown>(
     return mock.result as T;
 };
 
-const createDevApi = (): ApiObjectType => ({
-    methods: {
-        b24Call: findMock,
-        toast: window.Toast ?? ({} as ToastMethods),
-        axios: window.Axios ?? ({} as AxiosMethods),
-        openCustomScript: (...args: unknown[]) => {
-            window.Toast?.warning?.(
-                `Метод "openCustomScript" не доступен в dev-режиме. Аргументы: ${JSON.stringify(args)}`
+const createDevApi = (): ApiObjectType => {
+        if (latestFields === null) {
+            console.log('%c[API] ⚠️ Входные данные не загружены ' +
+                '\n\tТребуется зайти в приложение, получить входные данные и сохранить их в папку /src/mock ',
+                'color: #8B0000; font-weight: bold; background: #FFF0F5; padding: 2px 5px; border-radius: 3px; border-left: 2px solid #FF6B6B;',
             );
-        },
-        setUserfieldValue: (value: unknown) => {
-            window.Toast?.warning?.(`Метод "setUserfieldValue" не доступен в dev-режиме. Значение: ${JSON.stringify(value)}`);
         }
-    },
-    fields: latestFields
-});
+        return {
+            methods: {
+                b24Call: findMock,
+                toast: window.Toast ?? ({} as ToastMethods),
+                axios: window.Axios ?? ({} as AxiosMethods),
+                openCustomScript: (...args: unknown[]) => {
+                    window.Toast?.warning?.(
+                        `Метод "openCustomScript" не доступен в dev-режиме. Аргументы: ${JSON.stringify(args)}`
+                    );
+                },
+                setUserfieldValue: (value: unknown) => {
+                    console.log(
+                        '%c[DEV] ⚠️ setUserfieldValue' +
+                        '\n\tМетод недоступен в режиме разработки \n\t→ Для тестирования используйте production-сборку \n\t→ Переданное значение: ' + JSON.stringify(value),
+                        'color: #D35400; background: #FDF5E6; padding: 2px 5px; border-radius: 3px; font-weight: bold; border-left: 2px solid #F39C12;',
+                    )
+                    ;
+                }
+            },
+            fields: latestFields === null ? {placement: null} : latestFields
+        }
+    }
+;
 
 export const api = (): ApiObjectType => {
     if (import.meta.env.DEV) {
         return createDevApi();
     }
+
     if (typeof window.__GLOBAL_API__ === 'function') {
         return window.__GLOBAL_API__();
     }
