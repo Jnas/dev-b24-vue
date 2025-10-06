@@ -79,7 +79,7 @@
 
 <script setup lang="ts">
 import {computed, type Ref, ref, watch} from 'vue';
-import type {CommentType} from "@/features/example-dev-comments-form/types/types.js";
+import type { CommentType } from '../types/types';
 
 // Пропсы компонента
 const props = defineProps<{

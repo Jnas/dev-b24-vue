@@ -1,8 +1,8 @@
 import {ref} from "vue";
-import {BizprocService} from "@/features/example-dev-comments-form/services/BizprocService.ts";
-import type {CommentType, CrmCommentType, UserType} from "@/features/example-dev-comments-form/types/types.ts";
-import CrmService from "@/features/example-dev-comments-form/services/CrmService.ts";
-import UserService from "@/features/example-dev-comments-form/services/UserService.ts";
+import type { CommentType, CrmCommentType, UserType } from "../types/types";
+import CrmService from "../services/CrmService";
+import UserService from "../services/UserService";
+import { BizprocService } from "../services/BizprocService";
 
 /**
  * Менеджер комментариев - центральный класс для работы с комментариями

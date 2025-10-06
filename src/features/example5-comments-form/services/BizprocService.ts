@@ -1,5 +1,5 @@
 import {api} from "../../../../dev/api.ts";
-import type {CommentType} from "@/features/example-dev-comments-form/types/types.ts";
+import type { CommentType } from "../types/types.ts";
 
 /**
  * Сервис для работы с бизнес-процессами Bitrix24
