@@ -3,7 +3,7 @@ import type { ApiObjectFieldsType } from "./api.ts";
 
 type MockMethodType = {
     method: string;
-    params?: Record<string, unknown>;
+    params?: Record<string, unknown> | unknown[];
     result: unknown;
     delay?: number;
 };
@@ -34,6 +34,32 @@ function isMockMethodType(obj: unknown): obj is MockMethodType {
     );
 }
 
+// ----------- PARAMS NORMALIZATION -----------
+/**
+ * Нормализует параметры для сравнения
+ * Пустые массивы [] преобразуются в пустые объекты {}
+ * Это нужно потому что в Bitrix24 API пустые параметры могут передаваться и как [] и как {}
+ */
+function normalizeParams(params: unknown): Record<string, unknown> | unknown[] {
+    if (Array.isArray(params) && params.length === 0) {
+        return {};
+    }
+    if (typeof params === 'object' && params !== null && Object.keys(params).length === 0) {
+        return {};
+    }
+    return params as Record<string, unknown> | unknown[];
+}
+
+/**
+ * Сравнивает параметры с учетом нормализации
+ */
+function areParamsEqual(params1: unknown, params2: unknown): boolean {
+    const normalized1 = normalizeParams(params1);
+    const normalized2 = normalizeParams(params2);
+
+    return JSON.stringify(normalized1) === JSON.stringify(normalized2);
+}
+
 // ----------- MAIN LOADER -----------
 export function loadMockData(): MockDataType {
     if (!env?.DEV) {
@@ -56,9 +82,12 @@ export function loadMockData(): MockDataType {
                     mtime: new Date()
                 });
             } else if (isMockMethodType(content)) {
+                // Нормализуем параметры при загрузке моковых данных
+                const normalizedParams = normalizeParams(content.params ?? {});
+
                 methodMocks.push({
                     method: content.method,
-                    params: content.params ?? {},
+                    params: normalizedParams,
                     result: content.result,
                     delay: content.delay
                 });
@@ -76,3 +105,6 @@ export function loadMockData(): MockDataType {
         return { latestFields: { placement: null }, methodMocks: [] };
     }
 }
+
+// Экспортируем функцию нормализации для использования в других модулях
+export { normalizeParams, areParamsEqual };

@@ -2,12 +2,11 @@
   <v-app>
     <v-main>
       <v-container fluid>
-        <Example6BusinessProcessFieldsSetValue />
+        <Example/>
       </v-container>
     </v-main>
-
   </v-app>
 </template>
 <script setup lang="ts">
-import Example6BusinessProcessFieldsSetValue from "@/features/example6-business-process-field-set-value/Example6BusinessProcessFieldSetValue.vue";
+import Example from "@/features/example1-test-form/Example1MyApp.vue";
 </script>
