@@ -74,6 +74,7 @@ export type KeyBridgeStateType = {
     connected: boolean;     // Флаг активного подключения
     processing: boolean;    // Флаг выполнения операций
     error: string | null;   // Текст последней ошибки
+    pollRate: number;
     queues: {
         pending: number;    // Количество ожидающих запросов
         active: number;     // Количество активных запросов
@@ -121,6 +122,7 @@ class KeyBridgeClient {
             connected: !this.connection.broken && !!this.connection.key,
             processing: this.state.processing,
             error: this.state.error,
+            pollRate: this.connection.pollRate,
             queues: {
                 pending: this.queues.pending.size,
                 active: this.queues.active.size,

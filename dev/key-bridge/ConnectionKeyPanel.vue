@@ -191,7 +191,7 @@ const isConnected = computed(() => clientState.value.connected);
 /**
  * Текущий интервал опроса сервера в миллисекундах
  */
-const pollRate = computed(() => clientState.value.queues.active);
+const pollRate = computed(() => clientState.value.pollRate);
 
 /**
  * Текст последней ошибки подключения (из клиента)
