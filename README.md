@@ -167,7 +167,7 @@ shared/
 - Аналогичен методу `BX24.callMethod`, но возвращает Promise
 - Использование: `const response = await api().methods.b24Call('method.name', params)`
 - Не требует callback-параметра, что упрощает работу с асинхронным кодом
-- Документация: [BX24.callMethod](https://apidocs.bitrix24.ru/api-reference/bx24-js-sdk/how-to-call-rest-methods/bx24-call-method.html)
+- Документация: [BX24.callMethod](https://apidocs.bitrix24.ru/sdk/bx24-js-sdk/how-to-call-rest-methods/bx24-call-method.html)
 
 #### api().methods.axios
 Стандартный плагин Axios (версия 1.11.0) для выполнения HTTP-запросов.
@@ -330,4 +330,3 @@ export default {
 
 - [Официальная документация REST API Битрикс24](https://apidocs.bitrix24.ru/api-reference/)
 - [Документация по виджетам и взаимодействию с UI](https://apidocs.bitrix24.ru/api-reference/widgets/)
-- [Документация BX24 JS SDK](https://apidocs.bitrix24.ru/api-reference/bx24-js-sdk/)
